@@ -292,7 +292,7 @@ Fungsi Query:
 
 #### Tampilan INNER JOIN
 
-![Alt text](tampilanview.jpeg)
+![Alt text](innerjoin.jpeg)
 
 ### LEFT JOIN
 Operasi LEFT JOIN dalam SQL digunakan untuk menggabungkan data dari dua tabel dan menyertakan semua baris dari tabel kiri (`Customers`), serta baris yang cocok dari tabel kanan (`Orders`). Jika tidak ada kecocokan, hasil dari tabel kanan akan berisi nilai NULL.
