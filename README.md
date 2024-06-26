@@ -1,5 +1,5 @@
 # UAS Basis Data Lanjutan
-### Membuat Database BookStore
+## Membuat Database BookStore
 
 Project ini menjelaskan tentang pembuatan database pada sebuat toko buku dengan nama database "bookstore". Serta penggunaan fungsi agregat pada potongan querynya, membuat trigger, tabel virtual (view), menerapkan query innerjoin, leftjoin, subquery, having, wildcards, serta melakukan backup database dengan *mysqldump*. 
 
@@ -13,7 +13,7 @@ Pada database ini dibuat 8 tabel yaitu:
 - Tabel OrderDetails untuk menyimpan rincian tiap pesanan, menghubungkan pesanan dengan buku yang dipesan.
 - Tabel Stock untuk menyimpan data stok buku, dengan foreign key ke tabel Books.
 
-### Membuat tabel pada database BookStore
+## Membuat tabel pada database BookStore
 Query untuk membuat tabel pada database bookstore
 
 ```sh
@@ -87,30 +87,40 @@ CREATE TABLE Stock (
 );
 ```
 
-### Relasi Antar Tabel
+## Relasi Antar Tabel
 
-Dillinger is currently extended with the following plugins.
-Instructions on how to use them in your own application are linked below.
+Berikut adalah ER Diagram dari database BookStore dengan relasi tabel seperti berikut:
 
-| Plugin | README |
-| ------ | ------ |
-| Dropbox | [plugins/dropbox/README.md][PlDb] |
-| GitHub | [plugins/github/README.md][PlGh] |
-| Google Drive | [plugins/googledrive/README.md][PlGd] |
-| OneDrive | [plugins/onedrive/README.md][PlOd] |
-| Medium | [plugins/medium/README.md][PlMe] |
-| Google Analytics | [plugins/googleanalytics/README.md][PlGa] |
+![Alt text](ERDBookstore.png)
 
-## Development
+Berikut adalah penjelasan mengenai relasi antar tabel dalam skema database Bookstore:
 
-Want to contribute? Great!
+- Authors dan Books:
+Tabel Books memiliki kolom `author_id` yang merupakan *forein key* yang merujuk ke `author_id` di tabel Authors. Ini menunjukkan bahwa satu buku ditulis oleh satu penulis (relasi satu ke satu atau satu penulis bisa memiliki banyak buku).
 
-Dillinger uses Gulp + Webpack for fast developing.
-Make a change in your file and instantaneously see your updates!
+- Categories dan Books:
+Tabel Books memiliki kolom `category_id` yang merupakan *forein key* yang merujuk ke `category_id` di tabel Categories. Ini menunjukkan bahwa satu buku hanya dapat terhubung dengan satu kategori (relasi satu ke satu).
 
-Open your favorite Terminal and run these commands.
+- Publishers dan Books:
+Tabel Books memiliki kolom `publisher_id` yang merupakan *forein key* yang merujuk ke `publisher_id` di tabel Publishers. Ini menunjukkan bahwa satu buku diterbitkan oleh satu penerbit (relasi satu ke satu atau satu penerbit bisa memiliki banyak buku).
 
-First Tab:
+- Customers dan Orders:
+Tabel Orders memiliki kolom `customer_id` yang merupakan *forein key* yang merujuk ke `customer_id` di tabel Customers. Ini menunjukkan bahwa satu pesanan dibuat oleh satu pelanggan (relasi satu ke satu atau satu pelanggan bisa memiliki banyak pesanan).
+
+- Orders dan OrderDetails:
+Tabel OrderDetails memiliki kolom `order_id` yang merupakan *forein key* yang merujuk ke `order_id` di tabel Orders. Ini menunjukkan bahwa satu detail pesanan terhubung dengan satu pesanan tertentu (relasi satu ke banyak).
+
+- Books dan OrderDetails:
+Tabel OrderDetails memiliki kolom `book_id` yang merupakan *forein key* yang merujuk ke `book_id` di tabel Books. Ini menunjukkan bahwa satu detail pesanan berhubungan dengan satu buku tertentu yang dipesan (relasi satu ke banyak).
+
+- Books dan Stock:
+Tabel Stock memiliki kolom `book_id` yang merupakan *forein key* yang merujuk ke `book_id` di tabel Books. Ini menunjukkan bahwa satu entri stok (jumlah buku yang tersedia) terhubung dengan satu buku tertentu (relasi satu ke satu atau satu buku dapat memiliki satu entri stok).
+
+## Trigger
+
+Trigger ini dibuat untuk menanggapi perubahan data di dalam tabel. Misalnya, ketika sebuah baris data dimasukkan ke dalam tabel, trigger dapat dipicu untuk melakukan tugas tambahan seperti memperbarui tabel lain, mengirim notifikasi, atau melakukan validasi data.
+
+Query Trigger yang dibuat untuk melakukan update pada field .....
 
 ```sh
 node app
