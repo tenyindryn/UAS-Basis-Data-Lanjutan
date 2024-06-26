@@ -311,7 +311,7 @@ Fungsi Query:
 - 
 #### Tampilan LEFT JOIN
 
-![Alt text](tampilanview.jpeg)
+![Alt text](leftjoin.jpeg)
 
 ### SUBQUERY
 Subquery, atau sub-query, adalah sebuah query di dalam query lainnya. Subquery sering digunakan untuk melakukan operasi yang memerlukan data dari query lain sebagai bagian dari proses pengambilan datanya. Subquery dapat ditempatkan di dalam klausa SELECT, FROM, WHERE, atau HAVING dari query SQL utama.
@@ -328,7 +328,7 @@ Fungsi Query:
 
 #### Tampilan SUBQUERY
 
-![Alt text](tampilanview.jpeg)
+![Alt text](subquery.jpeg)
 
 ### HAVING
 Klausa HAVING digunakan dalam SQL untuk memfilter hasil grup yang dihasilkan oleh klausa GROUP BY. Perbedaannya dengan klausa WHERE adalah sebagai berikut:
@@ -355,7 +355,7 @@ Fungsi Query:
 
 #### Tampilan HAVING
 
-![Alt text](tampilanview.jpeg)
+![Alt text](having.jpeg)
 
 ### WILDCARDS
 Wildcard dalam konteks basis data, khususnya dalam SQL, merujuk pada karakter khusus yang digunakan untuk mencocokkan pola string. Wildcard memungkinkan untuk melakukan pencarian atau filter data yang tidak tepat atau tidak lengkap berdasarkan pola tertentu. Dua wildcard yang umum digunakan dalam SQL adalah `LIKE` dan `IN`.
@@ -369,7 +369,7 @@ Untuk mencari dan mengembalikan semua data dari tabel Customers di mana nilai ko
 
 #### Hasil
 
-![Alt text](tampilanview.jpeg)
+![Alt text](wildcardsj.jpeg)
 
 
 ```sh
@@ -380,7 +380,7 @@ Untuk mencari dan mengembalikan semua data dari tabel Customers di mana nilai ko
 
 #### Hasil
 
-![Alt text](tampilanview.jpeg)
+![Alt text](wildcardss.jpeg)
 
 ## Backup MYSQLDUMP
 
