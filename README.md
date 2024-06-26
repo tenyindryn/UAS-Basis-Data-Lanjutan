@@ -116,6 +116,29 @@ Tabel OrderDetails memiliki kolom `book_id` yang merupakan *forein key* yang mer
 - Books dan Stock:
 Tabel Stock memiliki kolom `book_id` yang merupakan *forein key* yang merujuk ke `book_id` di tabel Books. Ini menunjukkan bahwa satu entri stok (jumlah buku yang tersedia) terhubung dengan satu buku tertentu (relasi satu ke satu atau satu buku dapat memiliki satu entri stok).
 
+## Fungsi Agregat (`SUM`)
+Query fungsi agregat
+```sh
+UPDATE Orders AS o
+SET total_amount = (
+    SELECT SUM(od.quantity * od.price)
+    FROM OrderDetails AS od
+    WHERE od.order_id = o.order_id
+)
+WHERE EXISTS (
+    SELECT 1
+    FROM OrderDetails AS od
+    WHERE od.order_id = o.order_id
+);
+```
+Query di atas adalah sebuah perintah SQL yang digunakan untuk memperbarui kolom `total_amount` di tabel `Orders`. Query ini menggunakan subquery dan fungsi agregat SUM untuk menghitung total jumlah dari setiap order berdasarkan detail order di tabel `OrderDetails`.
+
+Fungsi Query:
+Menghitung Total Amount: Query ini menghitung total jumlah (`total_amount`) untuk setiap order berdasarkan detail order di tabel `OrderDetails`.
+Mengupdate Total Amount: Query ini mengupdate kolom `total_amount` di tabel `Orders` dengan hasil perhitungan dari subquery.
+
+Query ini berguna untuk memastikan bahwa kolom `total_amount` di tabel `Orders` selalu diperbarui dengan benar berdasarkan detail order di tabel `OrderDetails`. Dengan menggunakan subquery dan fungsi agregat, query ini menghitung total jumlah secara dinamis dan memperbarui kolom `total_amount` hanya jika ada entri yang sesuai di tabel `OrderDetails`.
+
 ## Trigger
 
 Trigger ini dibuat untuk menanggapi perubahan data di dalam tabel. Misalnya, ketika sebuah baris data dimasukkan ke dalam tabel, trigger dapat dipicu untuk melakukan tugas tambahan seperti memperbarui tabel lain, mengirim notifikasi, atau melakukan validasi data.
@@ -252,77 +275,120 @@ FROM
 
 #### Tampilan View 
 
-For production release:
+![Alt text](tampilanview.jpeg)
 
+### INNER JOIN
+Operasi INNER JOIN dalam SQL digunakan untuk menggabungkan data dari dua tabel berdasarkan kondisi tertentu.
+
+Query INNER JOIN
 ```sh
-gulp build --prod
+SELECT book_id, title, name, description
+FROM Books
+INNER JOIN Categories ON Books.category_id = Categories.category_id;
+```
+Fungsi Query:
+- Menggabungkan Data: Query ini menggabungkan data dari tabel `Books` dan tabel `Categories` berdasarkan kolom `category_id`. Hanya baris yang memiliki kecocokan di kedua tabel yang akan ditampilkan dalam hasil.
+- Mengambil Informasi Lengkap: Query ini mengumpulkan informasi lengkap tentang buku, termasuk `book_id`, `title` dari tabel `Books`, serta `name` dan `description` dari tabel `Categories`.
+
+#### Tampilan INNER JOIN
+
+![Alt text](tampilanview.jpeg)
+
+### LEFT JOIN
+Operasi LEFT JOIN dalam SQL digunakan untuk menggabungkan data dari dua tabel dan menyertakan semua baris dari tabel kiri (`Customers`), serta baris yang cocok dari tabel kanan (`Orders`). Jika tidak ada kecocokan, hasil dari tabel kanan akan berisi nilai NULL.
+
+Query LEFT JOIN
+```sh
+SELECT Customers.name, Orders.order_id
+FROM Customers
+LEFT JOIN Orders ON Customers.customer_id = Orders.customer_id
+ORDER BY Customers.name;
+```
+Fungsi Query:
+- Menggabungkan Data dengan Left Join: Query ini menggabungkan data dari tabel `Customers` dan tabel `Orders` berdasarkan kolom `customer_id`. Semua baris dari tabel `Customers` akan ditampilkan, dan jika tidak ada kecocokan di tabel `Orders`, kolom order_id akan berisi nilai NULL.
+- Mengambil Informasi Pelanggan dan Order: Query ini menampilkan nama pelanggan dari tabel `Customers` dan ID order dari tabel `Orders`.
+- Mengurutkan Data: Hasil query diurutkan berdasarkan nama pelanggan (`Customers.name`).
+- 
+#### Tampilan LEFT JOIN
+
+![Alt text](tampilanview.jpeg)
+
+### SUBQUERY
+Subquery, atau sub-query, adalah sebuah query di dalam query lainnya. Subquery sering digunakan untuk melakukan operasi yang memerlukan data dari query lain sebagai bagian dari proses pengambilan datanya. Subquery dapat ditempatkan di dalam klausa SELECT, FROM, WHERE, atau HAVING dari query SQL utama.
+
+Contoh Subquery
+```sh
+SELECT title, price
+FROM Books
+WHERE author_id IN (SELECT distinct author_id FROM Authors)
 ```
 
-Generating pre-built zip archives for distribution:
+Fungsi Query:
+- Memfilter Data: Query ini memfilter buku di tabel Books yang memiliki author_id yang ada di tabel Authors. Hanya buku-buku yang ditulis oleh penulis yang tercantum di tabel Authors yang akan ditampilkan dalam hasil.
+
+#### Tampilan SUBQUERY
+
+![Alt text](tampilanview.jpeg)
+
+### HAVING
+Klausa HAVING digunakan dalam SQL untuk memfilter hasil grup yang dihasilkan oleh klausa GROUP BY. Perbedaannya dengan klausa WHERE adalah sebagai berikut:
+WHERE: Digunakan untuk memfilter baris sebelum pengelompokan dilakukan (sebelum GROUP BY).
+HAVING: Digunakan untuk memfilter hasil grup setelah pengelompokan dilakukan (setelah GROUP BY).
+Klausa HAVING memungkinkan untuk melakukan filter terhadap hasil grup berdasarkan nilai-nilai hasil agregat seperti SUM, COUNT, AVG, dll.
+
+Contoh Query Having
+```sh
+SELECT 
+    book_id,
+    SUM(quantity) AS total_quantity
+FROM 
+    OrderDetails
+GROUP BY 
+    book_id
+HAVING 
+    SUM(quantity) > 3;
+```
+Fungsi Query:
+- Mengelompokkan Data: Query ini mengelompokkan baris dalam tabel `OrderDetails` berdasarkan `book_id`.
+- Menghitung Total Quantity: Menggunakan fungsi agregat `SUM` untuk menghitung jumlah total quantity untuk setiap `book_id`.
+- Memfilter Hasil dengan `HAVING`: Menggunakan klausa `HAVING` untuk memfilter hanya grup-grup yang jumlah total quantity-nya lebih dari 3.
+
+#### Tampilan HAVING
+
+![Alt text](tampilanview.jpeg)
+
+### WILDCARDS
+Wildcard dalam konteks basis data, khususnya dalam SQL, merujuk pada karakter khusus yang digunakan untuk mencocokkan pola string. Wildcard memungkinkan untuk melakukan pencarian atau filter data yang tidak tepat atau tidak lengkap berdasarkan pola tertentu. Dua wildcard yang umum digunakan dalam SQL adalah `LIKE` dan `IN`.
+
+Contoh Query Wildcards
+```sh
+SELECT * FROM Customers
+WHERE name LIKE 'j%';
+```
+Untuk mencari dan mengembalikan semua data dari tabel Customers di mana nilai kolom name dimulai dengan huruf 'j'. Ini menggunakan wildcard % dalam klausa LIKE, yang mencocokkan nol atau lebih karakter apa pun setelah huruf 'j'.
+
+#### Hasil
+
+![Alt text](tampilanview.jpeg)
+
 
 ```sh
-gulp build dist --prod
+SELECT * FROM Customers
+WHERE name LIKE '%s';
 ```
+Untuk mencari dan mengembalikan semua data dari tabel Customers di mana nilai kolom name diakhiri dengan huruf 's'. Ini menggunakan wildcard % dalam klausa LIKE, yang mencocokkan nol atau lebih karakter apa pun sebelum huruf 's'.
 
-## Docker
+#### Hasil
 
-Dillinger is very easy to install and deploy in a Docker container.
+![Alt text](tampilanview.jpeg)
 
-By default, the Docker will expose port 8080, so change this within the
-Dockerfile if necessary. When ready, simply use the Dockerfile to
-build the image.
+## Backup MYSQLDUMP
 
+Backup MySQL menggunakan mysqldump adalah proses untuk membuat salinan cadangan dari database MySQL secara keseluruhan atau sebagian
+
+Query backup dengan mysqldump
 ```sh
-cd dillinger
-docker build -t <youruser>/dillinger:${package.json.version} .
+mysqldump -u root -p bookstore > backup_bookstore.sql
 ```
+Setelah menjalankan perintah tersebut, MySQL akan meminta untuk memasukkan kata sandi pengguna root. Setelah kata sandi dikonfirmasi, mysqldump akan membuat salinan struktur database bookstore beserta semua datanya dan menyimpannya dalam file `backup_bookstore.sql`.
 
-This will create the dillinger image and pull in the necessary dependencies.
-Be sure to swap out `${package.json.version}` with the actual
-version of Dillinger.
-
-Once done, run the Docker image and map the port to whatever you wish on
-your host. In this example, we simply map port 8000 of the host to
-port 8080 of the Docker (or whatever port was exposed in the Dockerfile):
-
-```sh
-docker run -d -p 8000:8080 --restart=always --cap-add=SYS_ADMIN --name=dillinger <youruser>/dillinger:${package.json.version}
-```
-
-> Note: `--capt-add=SYS-ADMIN` is required for PDF rendering.
-
-Verify the deployment by navigating to your server address in
-your preferred browser.
-
-```sh
-127.0.0.1:8000
-```
-
-## License
-
-MIT
-
-**Free Software, Hell Yeah!**
-
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
-
-   [dill]: <https://github.com/joemccann/dillinger>
-   [git-repo-url]: <https://github.com/joemccann/dillinger.git>
-   [john gruber]: <http://daringfireball.net>
-   [df1]: <http://daringfireball.net/projects/markdown/>
-   [markdown-it]: <https://github.com/markdown-it/markdown-it>
-   [Ace Editor]: <http://ace.ajax.org>
-   [node.js]: <http://nodejs.org>
-   [Twitter Bootstrap]: <http://twitter.github.com/bootstrap/>
-   [jQuery]: <http://jquery.com>
-   [@tjholowaychuk]: <http://twitter.com/tjholowaychuk>
-   [express]: <http://expressjs.com>
-   [AngularJS]: <http://angularjs.org>
-   [Gulp]: <http://gulpjs.com>
-
-   [PlDb]: <https://github.com/joemccann/dillinger/tree/master/plugins/dropbox/README.md>
-   [PlGh]: <https://github.com/joemccann/dillinger/tree/master/plugins/github/README.md>
-   [PlGd]: <https://github.com/joemccann/dillinger/tree/master/plugins/googledrive/README.md>
-   [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
-   [PlMe]: <https://github.com/joemccann/dillinger/tree/master/plugins/medium/README.md>
-   [PlGa]: <https://github.com/RahulHP/dillinger/blob/master/plugins/googleanalytics/README.md>
